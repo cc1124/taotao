@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class ItemController {
@@ -22,10 +23,15 @@ public class ItemController {
         Item item = new Item(tbItem);
         //返回给页面的信息
         TbItemDesc tbItemDesc = itemService.getItemDescById(itemId);
-
-         model.addAttribute("item",item);
-         model.addAttribute("itemDesc",tbItemDesc);
+        model.addAttribute("item",item);
+        model.addAttribute("itemDesc",tbItemDesc);
         return  "item";
+    }
+    @RequestMapping("/item/param/{itemId}")
+    @ResponseBody
+    public  String showItemParam(@PathVariable Long itemId ,Model model){
+        String itemParam = itemService.getItemParamItemByItemId(itemId);
+        return  itemParam;
     }
 
 }

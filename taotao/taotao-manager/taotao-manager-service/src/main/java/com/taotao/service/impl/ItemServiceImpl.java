@@ -2,8 +2,13 @@ package com.taotao.service.impl;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import com.taotao.common.utils.JsonUtils;
+import com.taotao.mapper.TbItemParamItemMapper;
+import com.taotao.mapper.TbItemParamMapper;
+import com.taotao.pojo.TbItemParam;
+import com.taotao.pojo.TbItemParamItem;
 import com.taotao.service.jedis.JedisClient;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +54,8 @@ public class ItemServiceImpl implements ItemService {
 	private TbItemMapper  tbItemMapper;
 	@Autowired
 	private TbItemDescMapper tbItemDescMapper;
+	@Autowired
+	private TbItemParamItemMapper tbItemParamItemMapper;
 	@Override
 	public TbItem geTbItemById(long itemid) {
 		try {
@@ -85,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
 	}
 	
 	@Override
-	public TaotaoResult insertTbItem(TbItem tbItem,String desc) {
+	public TaotaoResult insertTbItem(TbItem tbItem,String desc,String itemParams) {
 		//页面传过来的数据没有id， status，created，updated
 		final long itemId = IDUtils.genItemId();
 		tbItem.setId(itemId);
@@ -101,7 +108,13 @@ public class ItemServiceImpl implements ItemService {
 		tbItemDesc.setCreated(date);
 		tbItemDesc.setUpdated(date);
 		tbItemDescMapper.insertTbItemDesc(tbItemDesc);
-
+        //存入规格参数
+		TbItemParamItem tbItemParamItem = new TbItemParamItem();
+		tbItemParamItem.setItemId(itemId);
+		tbItemParamItem.setParamData(itemParams);
+		tbItemParamItem.setCreated(date);
+		tbItemParamItem.setUpdated(date);
+		tbItemParamItemMapper.insertTbItemParamItem(tbItemParamItem);
 		/**
 		 * 在这里发布消息，更新缓存
 		 * 1.用点对点 还是订阅发布
@@ -140,5 +153,33 @@ public class ItemServiceImpl implements ItemService {
 			e.printStackTrace();
 		}
 		return tbItemDesc;
+	}
+
+	@Override
+	public String getItemParamItemByItemId(long itemId) {
+		TbItemParamItem itemParam = tbItemParamItemMapper.getItemParamItemByItemId(itemId);
+		//这是数据库中的json数据（模板json）
+		String paramData = itemParam.getParamData();
+		//map(key = group value = param(key:k,value:v))
+		List<Map> maps = JsonUtils.jsonToList(paramData, Map.class);
+		StringBuffer sb = new StringBuffer();
+		sb.append("<table cellpadding=\"0\" cellspacing=\"1\" width=\"100%\" border=\"0\" class=\"Ptable\">\n");
+		sb.append("    <tbody>\n");
+		for(Map m1:maps) {
+			sb.append("        <tr>\n");
+			sb.append("            <th class=\"tdTitle\" colspan=\"2\">"+m1.get("group")+"</th>\n");
+			sb.append("        </tr>\n");
+			List<Map> list2 = (List<Map>) m1.get("params");
+			for(Map m2:list2) {
+				sb.append("        <tr>\n");
+				sb.append("            <td class=\"tdTitle\">"+m2.get("k")+"</td>\n");
+				sb.append("            <td>"+m2.get("v")+"</td>\n");
+				sb.append("        </tr>\n");
+			}
+		}
+		sb.append("    </tbody>\n");
+		sb.append("</table>");
+
+		return sb.toString();
 	}
 }

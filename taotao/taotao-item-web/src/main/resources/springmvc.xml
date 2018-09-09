@@ -19,10 +19,10 @@
 	<context:property-placeholder location="classpath:*.properties"/>
 	<!--注解驱动 -->
 	<mvc:annotation-driven />
-<!--
+<!-- 静态页面的加载-->
 	<mvc:resources location="/WEB-INF/js/" mapping="/js/**"/>
 	<mvc:resources location="/WEB-INF/css/" mapping="/css/**"/>
--->
+
 
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -38,8 +38,31 @@
 		<!-- 设定文件上传的最大值5MB，5*1024*1024 -->
 		<property name="maxUploadSize" value="5242880"></property>
 	</bean>
-	
-	
+
+	<!--ResponseBody中文乱码问题解决-->
+	<mvc:annotation-driven >
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg value="UTF-8"/>
+				<property name="supportedMediaTypes">
+					<list>
+						<bean class="org.springframework.http.MediaType">
+							<constructor-arg index="0" value="text"/>
+							<constructor-arg index="1" value="plain"/>
+							<constructor-arg index="2" value="UTF-8"/>
+						</bean>
+						<bean class="org.springframework.http.MediaType">
+							<constructor-arg index="0" value="*"/>
+							<constructor-arg index="1" value="*"/>
+							<constructor-arg index="2" value="UTF-8"/>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+
 	<!-- 引用dubbo服务
 		<dubbo:reference interface="com.taotao.service.ItemService" id="itemService" timeout="30000"/> -->
 	<dubbo:application name="taotao-portal-web"/>

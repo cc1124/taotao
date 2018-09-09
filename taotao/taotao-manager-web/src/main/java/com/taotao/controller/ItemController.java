@@ -32,8 +32,8 @@ import com.taotao.service.ItemService;
 	}
 	@RequestMapping("/save")
 	@ResponseBody
-    public TaotaoResult insertTbItem(TbItem item,String desc){
-		TaotaoResult result = itemService.insertTbItem(item, desc);
+    public TaotaoResult insertTbItem(TbItem item,String desc,String itemParams){
+		TaotaoResult result = itemService.insertTbItem(item, desc,itemParams);
     	return result;
     }
 	
