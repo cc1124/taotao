@@ -14,60 +14,20 @@
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context-4.2.xsd">
 <!-- 注解扫描 -->
-	<context:component-scan base-package="com.taotao.item.controller" />
+	<context:component-scan base-package="com.taotao.sso.controller" />
 	<!--引入配置文件-->
 	<context:property-placeholder location="classpath:*.properties"/>
 	<!--注解驱动 -->
 	<mvc:annotation-driven />
-<!-- 静态页面的加载-->
+<!-- 静态页面的加载
 	<mvc:resources location="/js/" mapping="/js/**"/>
 	<mvc:resources location="/css/" mapping="/css/**"/>
-
-    <!--freemarker对象管理 -->
+-->
+    <!--前端控制器-->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/" />
 		<property name="suffix" value=".jsp" />
-	</bean>
-
-	<!-- 配置链接工厂对象-->
-	<bean id="targetConnectionFactory" class ="org.apache.activemq.ActiveMQConnectionFactory">
-		<property name = "brokerURL"  value="tcp://192.168.25.168:61616"/>
-	</bean>
-	<!-- 通过spring内置的对象来创建链接对象-->
-	<bean id="connectionFactory" class="org.springframework.jms.connection.SingleConnectionFactory">
-		<property name="targetConnectionFactory" ref="targetConnectionFactory"/>
-	</bean>
-	<!-- 通过spring自己的对象来得到JmsTemlate模板对象 -->
-	<bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
-		<property name="connectionFactory" ref="connectionFactory"/>
-	</bean>
-	<!--点对点对象 -->
-	<!--<bean id="queue" class="org.apache.activemq.command.ActiveMQQueue">
-		这边的value必须写成发布者的value
-		<constructor-arg  value="taotao-queue"/>
-	</bean> -->
-	<!-- 订阅与发布对象-->
-	<bean id="topic" class="org.apache.activemq.command.ActiveMQTopic">
-		<constructor-arg  value="taotao-topic"/>
-	</bean>
-
-	<!-- 配置监听对象-->
-	<bean id="itemChangeListener" class="com.taotao.item.listener.ItemChangeListener"></bean>
-	<!--把监听器对象交给spring来管理 -->
-	<bean  class="org.springframework.jms.listener.DefaultMessageListenerContainer">
-		<property name="connectionFactory" ref="connectionFactory"/>
-		<property name="destination" ref = "topic"/>
-		<property name="messageListener" ref="itemChangeListener"/>
-	</bean>
-
-	<!-- 定义文件上传解析器 -->
-	<bean id="multipartResolver"
-		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<!-- 设定默认编码 -->
-		<property name="defaultEncoding" value="UTF-8"></property>
-		<!-- 设定文件上传的最大值5MB，5*1024*1024 -->
-		<property name="maxUploadSize" value="5242880"></property>
 	</bean>
 
 	<!--ResponseBody中文乱码问题解决-->
@@ -92,18 +52,11 @@
 			</bean>
 		</mvc:message-converters>
 	</mvc:annotation-driven>
-    <!-- freemarker对象管理-->
-	<bean id="freemarkerConfig"
-		  class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-		<!--模板路径-->
-		<property name="templateLoaderPath" value="/WEB-INF/ftl/" />
-		<!--设置编码格式-->
-		<property name="defaultEncoding" value="UTF-8" />
-	</bean>
 
 	<!-- 引用dubbo服务
 		<dubbo:reference interface="com.taotao.service.ItemService" id="itemService" timeout="30000"/> -->
 	<dubbo:application name="taotao-portal-web"/>
 	<dubbo:registry protocol="zookeeper" address="192.168.25.167:2181"/>
-	<dubbo:reference interface="com.taotao.service.ItemService" id="itemService" timeout="30000"/>
+	<dubbo:reference interface="com.taotao.sso.service.UserService" id="userService" timeout="30000"/>
+
 </beans>
