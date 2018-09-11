@@ -10,4 +10,11 @@
     <select id="getUserByEmail" parameterType="string" resultType="com.taotao.pojo.TbUser">
         SELECT  * FROM  tbuser WHERE  email = #{email}
     </select>
+    <insert id="insertUser" parameterType="com.taotao.pojo.TbUser">
+        INSERT INTO tbuser (userName, passWord, phone, email, created, updated)
+        VALUE (#{userName},#{passWord},#{phone},#{email},#{created},#{updated})
+    </insert>
+    <select id="getUserByUserAndPass" resultType="com.taotao.pojo.TbUser">
+        SELECT  * FROM  tbuser WHERE  userName = #{0} and passWord = #{1}
+    </select>
 </mapper>

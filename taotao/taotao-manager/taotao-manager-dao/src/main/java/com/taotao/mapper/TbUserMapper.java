@@ -24,4 +24,18 @@ public interface TbUserMapper {
      * @return  如果反悔对象不为null，表示Email已经存在
      */
      TbUser getUserByEmail(String email);
+
+    /**
+     * 添加一个用户到数据库
+     * @param tbUser  需要添加的用户信息
+     */
+     void insertUser(TbUser tbUser);
+
+    /**
+     * 根据数据账号密码查询用户是否存在，注意密码是MD5加密的
+     * @param uaerName  用户账号
+     * @param passWord  用户密码
+     * @return 如果不为null ，表示用户存在
+     */
+     TbUser  getUserByUserAndPass(String uaerName,String passWord);
 }
