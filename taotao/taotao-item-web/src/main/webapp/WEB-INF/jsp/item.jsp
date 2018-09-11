@@ -126,8 +126,8 @@
 					<div class="dt">购买数量：</div>
 					<div class="dd">
 						<div class="wrap-input">
-								<a class="btn-reduce" href="javascript:;" onclick="setAmount.reduce('#buy-num')">减少数量</a>
-								<a class="btn-add" href="javascript:;" onclick="setAmount.add('#buy-num')">增加数量</a>
+								<a class="btn-reduce" href="javascript:;" onclick="setAmount.reduce('#buy-num')">-</a>
+								<a class="btn-add" href="javascript:;" onclick="setAmount.add('#buy-num')">+</a>
 								<input class="text" id="buy-num" value="1" onkeyup="setAmount.modify('#buy-num');"/>
 						</div>
 					</div>
@@ -135,7 +135,7 @@
 		        <li id="choose-result"><div class="dt"></div><div class="dd"></div></li>
 				<li id="choose-btns">
 					<div id="choose-btn-append"  class="btn">
-							<a class="btn-append " id="InitCartUrl" href="/cart/add/${item.id}.html" clstag="shangpin|keycount|product|initcarturl">加入购物车<b></b></a>
+							<a class="btn-append " id="InitCartUrl" href="javascript:addCart();" clstag="shangpin|keycount|product|initcarturl">加入购物车<b></b></a>
 					</div>
 					<div id="choose-btn-easybuy" class="btn"></div>
 					<div id="choose-btn-divide" class="btn"></div>
@@ -299,6 +299,12 @@
 			itemControl.getItemDesc(itemId);
 		},1000);
 	});
+	//加入购物车
+	function addCart() {
+		var num = $("#buy-num").val();
+		location.href="http://localhost:8089/cart/add/${item.id}.html?num="+num;
+
+	}
 </script>
 </body>
 </html>
