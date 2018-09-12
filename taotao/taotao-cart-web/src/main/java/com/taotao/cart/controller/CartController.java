@@ -96,13 +96,13 @@ public class CartController {
     private List<TbItem> getCartList(HttpServletRequest request){
         //默认使用utf-8编码
         String json = CookieUtils.getCookieValue(request, TT_CART, true);
-        if(StringUtils.isBlank(json)){
+        if(StringUtils.isNotBlank(json)){
             //从cookie里面取数据，娶不到直接返回空集合
-            return  new ArrayList<TbItem>();
+            //取到返回指定数据
+            List<TbItem> list = JsonUtils.jsonToList(json, TbItem.class);
+            return  list;
         }
-        //取到返回指定数据
-        List<TbItem> list = JsonUtils.jsonToList(json, TbItem.class);
-        return  list;
+        return  new ArrayList<TbItem>();
     }
 
 }

@@ -43,7 +43,9 @@ public class UserController {
     public TaotaoResult login(String userName, String passWord, HttpServletResponse response, HttpServletRequest request){
         TaotaoResult result = userService.loginUser(userName, passWord);
         //存入cookie。要把token存入浏览器
-        CookieUtils.setCookie(request,response,COOKIE_TOKEN_KEY,result.getData().toString());
+        if (result.getStatus()==200) {
+            CookieUtils.setCookie(request, response, COOKIE_TOKEN_KEY, result.getData().toString());
+        }
         return result;
     }
 
